@@ -5,6 +5,8 @@ pipeline {
     environment {
       JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST = 'registry.cn-zhangjiakou.aliyuncs.com'
       JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT = 443
+      JENKINS_X_DOCKER_REGISTRY_USER = 'lujijiang'
+      JENKINS_X_DOCKER_REGISTRY_PWD = 'saasxx0401'
       ORG               = 'saasxx'
       APP_NAME          = 'demo'
       GIT_CREDS         = credentials('jenkins-x-git')
@@ -30,6 +32,11 @@ pipeline {
             sh "mvn install"
             sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION ."
             sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION"
+              
+            sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$PREVIEW_VERSION ."
+            sh "docker login --username=$JENKINS_X_DOCKER_REGISTRY_USER --password=$JENKINS_X_DOCKER_REGISTRY_PWD $JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST"
+            sh "docker tag $APP_NAME:$PREVIEW_VERSION $JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST/$ORG/$APP_NAME:$PREVIEW_VERSION"
+            sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$PREVIEW_VERSION"
           }
 
           dir ('./charts/preview') {
@@ -63,8 +70,8 @@ pipeline {
             sh 'mvn clean deploy'
             
             sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION) ."
-            sh "docker login --username=lujijiang@gmail.com --password=saasxx0401 registry.cn-zhangjiakou.aliyuncs.com"
-            sh "docker tag $APP_NAME registry.cn-zhangjiakou.aliyuncs.com/$ORG/$APP_NAME:$(cat VERSION)"
+            sh "docker login --username=$JENKINS_X_DOCKER_REGISTRY_USER --password=$JENKINS_X_DOCKER_REGISTRY_PWD $JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST"
+            sh "docker tag $APP_NAME:\$(cat VERSION) $JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST/$ORG/$APP_NAME:$(cat VERSION)"
             sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION)"
           }
         }
