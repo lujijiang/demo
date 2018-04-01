@@ -3,7 +3,9 @@ pipeline {
       label "jenkins-maven"
     }
     environment {
-      ORG               = 'jenkinsx'
+      JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST = 'registry.cn-zhangjiakou.aliyuncs.com'
+      JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT = 443
+      ORG               = 'saasxx'
       APP_NAME          = 'demo'
       GIT_CREDS         = credentials('jenkins-x-git')
       CHARTMUSEUM_CREDS = credentials('jenkins-x-chartmuseum')
@@ -16,6 +18,8 @@ pipeline {
           branch 'PR-*'
         }
         environment {
+          
+          
           PREVIEW_VERSION = "0.0.0-SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER"
           PREVIEW_NAMESPACE = "$APP_NAME-$BRANCH_NAME".toLowerCase()
           HELM_RELEASE = "$PREVIEW_NAMESPACE".toLowerCase()
