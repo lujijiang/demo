@@ -61,8 +61,10 @@ pipeline {
           }
           container('maven') {
             sh 'mvn clean deploy'
-
+            
             sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION) ."
+            sh "docker login --username=lujijiang@gmail.com --password=saasxx0401 registry.cn-zhangjiakou.aliyuncs.com"
+            sh "docker tag $APP_NAME registry.cn-zhangjiakou.aliyuncs.com/$ORG/$APP_NAME:$(cat VERSION)"
             sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION)"
           }
         }
