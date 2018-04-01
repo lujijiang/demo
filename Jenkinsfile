@@ -30,9 +30,7 @@ pipeline {
           container('maven') {
             sh "mvn versions:set -DnewVersion=$PREVIEW_VERSION"
             sh "mvn install"
-            sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION ."
-            sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION"
-              
+            
             sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$PREVIEW_VERSION ."
             sh "docker login --username=$JENKINS_X_DOCKER_REGISTRY_USER --password=$JENKINS_X_DOCKER_REGISTRY_PWD $JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST"
             sh "docker tag $APP_NAME:$PREVIEW_VERSION $JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST/$ORG/$APP_NAME:$PREVIEW_VERSION"
