@@ -65,9 +65,9 @@ pipeline {
           }
           container('maven') {
             sh 'mvn clean deploy'
-            sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION) ."
+            sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST/$ORG/$APP_NAME:\$(cat VERSION) ."
             sh "docker login --username=$JENKINS_X_DOCKER_REGISTRY_USER --password=$JENKINS_X_DOCKER_REGISTRY_PWD $JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST"
-            sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION)"
+            sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST/$ORG/$APP_NAME:\$(cat VERSION)"
           }
         }
       }
